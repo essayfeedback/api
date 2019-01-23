@@ -1,0 +1,6 @@
+{
+  "verbose": true,
+  "ignore": ["node_modules", ".vscode"],
+  "watch": ["index.js", "src/"],
+  "ext": "js"
+}
