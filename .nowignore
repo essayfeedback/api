@@ -1,4 +1,7 @@
-/node_modules
 .DS_Store
-npm-debug.log*
 /.vscode
+/node_modules
+.gitignore
+deploy.sh
+nodemon.json
+npm-debug.log*
