@@ -34,7 +34,7 @@ router
   })
   .delete((req, res) => {
     res.essay.remove(err => {
-      res.status(204).send("");
+      res.status(204).json({});
     });
   });
 

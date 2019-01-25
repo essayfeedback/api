@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const schema = mongoose.Schema;
 
 const model = new schema({
-  areas: Array,
+  areas: [Boolean],
   stage: String,
   question: String,
   link: String,
