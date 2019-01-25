@@ -4,8 +4,7 @@ const Essay = require("./model");
 
 router.use("/:id", (req, res, next) => {
   Essay.findById(req.params.id, (err, essay) => {
-    if (err) res.status(500).send(err);
-    else req.essay = essay;
+    req.essay = essay;
     next();
   });
 });
@@ -14,8 +13,7 @@ router
   .route("/")
   .get((req, res) => {
     Essay.find({}, (err, essays) => {
-      if (err) res.status(500).send(err);
-      else res.json(essays);
+      res.json(essays);
     });
   })
   .post((req, res) => {
@@ -36,8 +34,7 @@ router
   })
   .delete((req, res) => {
     res.essay.remove(err => {
-      if (err) res.status(500).send(err);
-      else res.status(204).send("");
+      res.status(204).send("");
     });
   });
 
