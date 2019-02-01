@@ -3,30 +3,46 @@ const schema = mongoose.Schema;
 const Essay = require("../models/Essay");
 
 const User = new schema({
-  rating: Number,
-  uid: String
+  uid: { type: String, required: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  photoURL: String,
+  rating: {
+    type: Number,
+    default: 0
+  },
+  numRatings: {
+    type: Number,
+    default: 0
+  }
 });
 
-User.statics.getReviewers = function(cb) {
-  return User.find({ numReviewed: { $gt: 0 } }, cb);
+User.methods.getEssaysPosted = function(cb) {
+  return Essay.find({ ownerUID: this.uid }, cb);
 };
 
-User.statics.getPosters = function(cb) {
-  return User.find({ numReviewed: { $gt: 0 } }, cb);
+User.methods.getEssaysReviewedNum = function() {
+  return Essay.count({ reviewerUID: this.uid, isReviewComplete: true });
 };
 
-User.methods.getNumReviewed = function() {
-  return Essay.count({ reviewerUID: this.uid });
-};
-
-User.methods.getNumPosted = function() {
+User.methods.getEssaysPostedNum = function() {
   return Essay.count({ ownerUID: this.uid });
 };
 
 User.methods.updateRating = function(newRating) {
-  const numReviewed = User.getNumReviewed();
-  this.rating = (this.rating * numReviewed + newRating) / (numReviewed + 1);
+  this.rating = (this.rating * this.numRatings + newRating) / (this.numRatings + 1);
+  this.numRatings += 1;
   return this.save();
+};
+
+User.statics.getReviewersNum = function() {
+  Essay.find({ reviewerUID: { $ne: "" } }, { reviewerUID: 1 }).then(function(err, essays) {
+    return new Set(essays.map(({ reviewerUID }) => reviewerUID)).size;
+  });
+};
+
+User.statics.getUsersNum = function() {
+  return User.count();
 };
 
 module.exports = mongoose.model("User", User);

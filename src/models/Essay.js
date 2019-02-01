@@ -2,24 +2,41 @@ const mongoose = require("mongoose");
 const schema = mongoose.Schema;
 
 const Essay = new schema({
-  selectedAreas: [Boolean],
-  selectedStage: Number,
+  selectedAreas: {
+    type: [Boolean],
+    required: true
+  },
+  selectedStage: {
+    type: Number,
+    required: true
+  },
   question: String,
-  link: String,
-  ownerUID: String,
-  reviewerUID: String,
-  isReviewComplete: Boolean
+  link: {
+    type: String,
+    required: true
+  },
+  ownerUID: {
+    type: String,
+    required: true
+  },
+  reviewerUID: {
+    type: String,
+    default: ""
+  },
+  isReviewComplete: {
+    type: Boolean,
+    default: false
+  }
 });
 
-Essay.statics.getNumEssays = function() {
+Essay.statics.getNum = function() {
   return Essay.count();
 };
 
-Essay.statics.getNumReviewed = function() {
+Essay.statics.getReviewedNum = function() {
   return Essay.count({ isReviewComplete: true });
 };
-
-Essay.statics.getPendingReview = function() {
+Essay.statics.getPendingReviewNum = function() {
   return Essay.count({ isReviewComplete: false });
 };
 

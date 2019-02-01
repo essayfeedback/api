@@ -5,43 +5,40 @@ const User = require("../models/user");
 router
   .route("/")
   .get((req, res) => {
-    User.find({}, (err, users) => {
-      res.json(users);
-    });
+    User.find({}, (err, users) => res.json(users));
   })
   .post((req, res) => {
-    const user = new user(req.body);
-    User.save();
-    res.status(201).json(user);
+    const user = new User(req.body);
+    user.save().then(savedUser => res.status(201).json(savedUser));
   });
 
-router.use("/:id", (req, res, next) => {
-  User.findById(req.params.id, (err, user) => {
+router.use("/:uid", (req, res, next) => {
+  User.findOne({ uid: req.params.uid }, (err, user) => {
     req.user = user;
     next();
   });
 });
 
 router
-  .route("/:id")
+  .route("/:uid")
   .get((req, res) => res.json(req.user))
   .put((req, res) => {
     Object.keys(req.body).map(key => {
       req.user[key] = req.body[key];
     });
     req.user.save();
-    res.json(req.user);
+    res.status(200).end();
   })
   .patch((req, res) => {
     for (let p in req.body) {
       req.user[p] = req.body[p];
     }
     req.user.save();
-    res.json(req.user);
+    res.status(200).end();
   })
   .delete((req, res) => {
-    res.User.remove(err => {
-      res.status(204).send();
+    res.user.remove(err => {
+      res.status(204).end();
     });
   });
 
