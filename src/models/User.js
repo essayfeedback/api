@@ -6,7 +6,10 @@ const User = new schema({
   uid: { type: String, required: true },
   name: { type: String, required: true },
   email: { type: String, required: true },
-  photoURL: String,
+  photoURL: {
+    type: String,
+    default: ""
+  },
   rating: {
     type: Number,
     default: 0

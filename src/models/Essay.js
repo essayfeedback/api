@@ -10,7 +10,10 @@ const Essay = new schema({
     type: Number,
     required: true
   },
-  question: String,
+  question: {
+    type: String,
+    default: ""
+  },
   link: {
     type: String,
     required: true
