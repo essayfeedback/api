@@ -2,10 +2,6 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 
-function isEmptyArray(array) {
-  return array === undefined || array === null || array.length == 0;
-}
-
 router
   .route("/")
   .get((req, res) => {
@@ -13,7 +9,7 @@ router
   })
   .post((req, res) => {
     User.find({ uid: req.body.uid }, function(err, existingUsers) {
-      if (err || isEmptyArray(existingUsers)) {
+      if (existingUsers.length === 0) {
         const user = new User(req.body);
         user.save().then(savedUser => res.status(201).json(savedUser));
       } else {
@@ -24,8 +20,12 @@ router
 
 router.use("/:uid", (req, res, next) => {
   User.findOne({ uid: req.params.uid }, (err, user) => {
-    req.user = user;
-    next();
+    if (!user) {
+      res.status(404).end();
+    } else {
+      req.user = user;
+      next();
+    }
   });
 });
 

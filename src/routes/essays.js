@@ -16,8 +16,12 @@ router
 
 router.use("/:id", (req, res, next) => {
   Essay.findById(req.params.id, (err, essay) => {
-    req.essay = essay;
-    next();
+    if (!essay) {
+      res.status(404).end();
+    } else {
+      req.essay = essay;
+      next();
+    }
   });
 });
 
