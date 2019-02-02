@@ -6,12 +6,12 @@ router
   .route("/")
   .get((req, res) => {
     Essay.find({ isReviewComplete: false }, (err, essays) => {
-      res.json(essays);
+      res.json({ essays });
     });
   })
   .post((req, res) => {
     const essay = new Essay(req.body);
-    essay.save().then(savedEssay => res.status(201).json(savedEssay));
+    essay.save().then(savedEssay => res.status(201).json({ essay: savedEssay }));
   });
 
 router.use("/:id", (req, res, next) => {
@@ -27,7 +27,7 @@ router.use("/:id", (req, res, next) => {
 
 router
   .route("/:id")
-  .get((req, res) => res.json(req.essay))
+  .get((req, res) => res.json({ essay: req.essay }))
   .put((req, res) => {
     Object.keys(req.body).map(key => {
       req.essay[key] = req.body[key];
