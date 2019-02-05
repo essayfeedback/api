@@ -17,6 +17,10 @@ const User = new schema({
   numRatings: {
     type: Number,
     default: 0
+  },
+  isAdmin: {
+    type: Number,
+    default: 0
   }
 });
 
