@@ -7,10 +7,8 @@ const {
   mongodb: { username, password }
 } = require("./secrets.json");
 
-mongoose.connect(
-  `mongodb://${username}:${encodeURIComponent(password)}@ds161804.mlab.com:61804/essayfeedback`,
-  { useNewUrlParser: true }
-);
+mongoose.connect(`mongodb://${username}:${encodeURIComponent(password)}@ds161804.mlab.com:61804/essayfeedback`, { useNewUrlParser: true });
+mongoose.set("debug", true);
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
