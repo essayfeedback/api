@@ -43,7 +43,7 @@ router
     res.status(200).end();
   })
   .delete((req, res) => {
-    res.essay.remove(err => {
+    req.essay.remove(err => {
       res.status(204).end();
     });
   });
