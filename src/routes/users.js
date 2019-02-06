@@ -17,7 +17,7 @@ router
     });
   });
 
-router.use("/:uid", (req, res, next) => {
+router.use("/:uid*", (req, res, next) => {
   User.findOne({ uid: req.params.uid }, (err, user) => {
     if (!user) {
       res.status(404).end();
@@ -50,5 +50,20 @@ router
       res.status(204).end();
     });
   });
+
+router.get("/:uid/posted", (req, res) => {});
+router.get("/:uid/posted/count", (req, res) => {
+  const count = req.user.getEssaysPostedCount();
+  res.json({
+    count
+  });
+});
+router.get("/:uid/reviewed", (req, res) => {});
+router.get("/:uid/reviewed/count", (req, res) => {
+  const count = req.user.getEssaysReviewedCount();
+  res.json({
+    count
+  });
+});
 
 module.exports = router;

@@ -28,11 +28,15 @@ User.methods.getEssaysPosted = function(cb) {
   return Essay.find({ ownerUID: this.uid }, cb);
 };
 
-User.methods.getEssaysReviewedNum = function() {
+User.methods.getEssaysReviewed = function() {
+  return Essay.find({ reviewerUID: this.uid, isReviewComplete: true });
+};
+
+User.methods.getEssaysReviewedCount = function() {
   return Essay.count({ reviewerUID: this.uid, isReviewComplete: true });
 };
 
-User.methods.getEssaysPostedNum = function() {
+User.methods.getEssaysPostedCount = function() {
   return Essay.count({ ownerUID: this.uid });
 };
 
@@ -42,13 +46,13 @@ User.methods.updateRating = function(newRating) {
   return this.save();
 };
 
-User.statics.getReviewersNum = function() {
+User.statics.getReviewersCount = function() {
   Essay.find({ reviewerUID: { $ne: "" } }, { reviewerUID: 1 }).then(function(err, essays) {
     return new Set(essays.map(({ reviewerUID }) => reviewerUID)).size;
   });
 };
 
-User.statics.getUsersNum = function() {
+User.statics.getUsersCount = function() {
   return User.count();
 };
 

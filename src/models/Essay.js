@@ -32,14 +32,14 @@ const Essay = new schema({
   }
 });
 
-Essay.statics.getNum = function() {
+Essay.statics.getCount = function() {
   return Essay.count();
 };
 
-Essay.statics.getReviewedNum = function() {
+Essay.statics.getReviewedCount = function() {
   return Essay.count({ isReviewComplete: true });
 };
-Essay.statics.getPendingReviewNum = function() {
+Essay.statics.getPendingReviewCount = function() {
   return Essay.count({ isReviewComplete: false });
 };
 
