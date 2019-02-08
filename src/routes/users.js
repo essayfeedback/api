@@ -8,7 +8,7 @@ router
     const sortBy = req.query.sort;
     const getUsers = User.find({});
     if (sortBy === "rating" || sortBy === "points") getUsers.sort({ [sortBy]: -1 });
-    getUsers.then(users => res.json({ users }));
+    getUsers.exec().then(users => res.json({ users }));
   })
   .post((req, res) => {
     const user = new User(req.body);

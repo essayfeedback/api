@@ -53,10 +53,7 @@ User.methods.getRating = function() {
   else return totals / this.ratings.length;
 };
 
-User.methods.updatePoints = function(inc) {
-  this.points += inc;
-  return this.save();
-};
+User.methods.getPoints = function(inc) {};
 
 User.methods.addRating = function(rating, raterUID) {
   this.ratings.push({
