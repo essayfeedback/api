@@ -49,7 +49,12 @@ router.get("/:uid/profile", (req, res) => {
   const getEssaysReviewing = req.user.getEssaysReviewing();
   Promise.all([getReviewed, getRating, getEssaysPosted, getEssaysReviewing]).then(([essaysReviewed, rating, essaysPosted, essaysReviewing]) => {
     res.json({
-      profile: [essaysPosted.length, essaysReviewed.length, rating, essaysPosted, essaysReviewing]
+      profile: {
+        essaysPosted,
+        rating,
+        essaysReviewedCount: essaysReviewed.length,
+        essaysReviewing
+      }
     });
   });
 });
