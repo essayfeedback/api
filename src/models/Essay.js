@@ -33,14 +33,14 @@ const Essay = new Schema({
 });
 
 Essay.statics.getCount = function() {
-  return Essay.count();
+  return Essay.count().exec();
 };
 
 Essay.statics.getReviewedCount = function() {
-  return Essay.count({ isReviewComplete: true });
+  return Essay.count({ isReviewComplete: true }).exec();
 };
 Essay.statics.getPendingReviewCount = function() {
-  return Essay.count({ isReviewComplete: false });
+  return Essay.count({ isReviewComplete: false }).exec();
 };
 
 module.exports = mongoose.model("Essay", Essay);

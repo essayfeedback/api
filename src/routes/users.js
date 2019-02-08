@@ -5,7 +5,7 @@ const User = require("../models/User");
 router
   .route("/")
   .get((req, res) => {
-    User.find({}, (err, users) => res.json({ users }));
+    User.find({}).then(users => res.json({ users }));
   })
   .post((req, res) => {
     const user = new User(req.body);
@@ -13,7 +13,7 @@ router
   });
 
 router.use("/:uid*", (req, res, next) => {
-  User.findOne({ uid: req.params.uid }, (err, user) => {
+  User.findOne({ uid: req.params.uid }).then(user => {
     if (!user) {
       res.status(404).end();
     } else {
@@ -30,38 +30,36 @@ router
     Object.keys(req.body).map(key => {
       req.user[key] = req.body[key];
     });
-    req.user.save();
-    res.status(200).end();
+    req.user.save().then(() => res.status(200).end());
   })
   .patch((req, res) => {
     for (let p in req.body) {
       req.user[p] = req.body[p];
     }
-    req.user.save();
-    res.status(200).end();
+    req.user.save().then(() => res.status(200).end());
   })
   .delete((req, res) => {
-    req.user.remove(err => {
-      res.status(204).end();
-    });
+    req.user.remove().then(() => res.status(204).end());
   });
 
 router.get("/:uid/profile", (req, res) => {
-  const postedCount = req.user.getEssaysPostedCount();
-  const reviewedCount = req.user.getEssaysReviewedCount();
-  const rating = req.user.getRatingAvg();
-  res.json({
-    profile: {
-      postedCount,
-      reviewedCount,
-      rating
-    }
+  const getPostedCount = req.user.getEssaysPostedCount();
+  const getReviewedCount = req.user.getEssaysReviewedCount();
+  const getRating = req.user.getRatingAvg();
+  Promise.all([getPostedCount, getReviewedCount, getRating]).then(([postedCount, reviewedCount, rating]) => {
+    res.json({
+      profile: {
+        postedCount,
+        reviewedCount,
+        rating
+      }
+    });
   });
 });
 
 router.post("/uid/rating", (req, res) => {
   const { rating, reviewerUID } = req.body;
-  const reviewer = User.findOne({ uid: reviewerUID });
+  const reviewer = User.findOne({ uid: reviewerUID }).exec();
   reviewer.addRating(rating, reviewerUID);
   res.status(200).end();
 });

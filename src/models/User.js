@@ -31,24 +31,24 @@ const User = new Schema({
   }
 });
 
-User.methods.getEssaysPosted = function(cb) {
-  return Essay.find({ ownerUID: this.uid }, cb);
+User.methods.getEssaysPosted = function() {
+  return Essay.find({ ownerUID: this.uid }).exec();
 };
 
-User.methods.getEssaysReviewed = function(cb) {
-  return Essay.find({ reviewerUID: this.uid, isReviewComplete: true }, cb);
+User.methods.getEssaysReviewed = function() {
+  return Essay.find({ reviewerUID: this.uid, isReviewComplete: true }).exec();
 };
 
 User.methods.getEssaysReviewedCount = function() {
-  return Essay.count({ reviewerUID: this.uid, isReviewComplete: true });
+  return Essay.count({ reviewerUID: this.uid, isReviewComplete: true }).exec();
 };
 
 User.methods.getEssaysPostedCount = function() {
-  return Essay.count({ ownerUID: this.uid });
+  return Essay.count({ ownerUID: this.uid }).exec();
 };
 
 User.methods.getRatingAvg = function() {
-  const totals = this.ratings.reduce((acc, curr) => acc + curr, 0);
+  const totals = this.ratings.reduce((acc, curr) => acc + curr.rating, 0);
   const avg = totals / this.ratings.length;
   return avg;
 };
@@ -58,30 +58,28 @@ User.methods.addRating = function(rating, raterUID) {
     rating,
     raterUID
   });
-  this.save();
+  return this.save();
 };
 
-User.statics.getReviewers = function(cb) {
+User.statics.getReviewers = function() {
   Essay.find({ reviewerUID: { $ne: "" } }, (err, essays) => {
     const reviewerUIDs = new Set(essays.map(({ reviewerUID }) => reviewerUID));
-    // TODO double check
-    return User.find(
-      {
-        uid: [...reviewerUIDs]
-      },
-      cb
-    );
+    return User.find({
+      uid: {
+        $all: [...reviewerUIDs]
+      }
+    }).exec();
   });
 };
 
 User.statics.getReviewersCount = function() {
-  Essay.find({ reviewerUID: { $ne: "" } }, (err, essays) => {
+  return Essay.find({ reviewerUID: { $ne: "" } }, (err, essays) => {
     return new Set(essays).size;
-  });
+  }).exec();
 };
 
 User.statics.getUsersCount = function() {
-  return User.count();
+  return User.count().exec();
 };
 
 module.exports = mongoose.model("User", User);
