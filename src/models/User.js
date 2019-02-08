@@ -1,8 +1,19 @@
 const mongoose = require("mongoose");
-const schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 const Essay = require("../models/Essay");
 
-const User = new schema({
+const Rating = new Schema({
+  rating: {
+    type: Number,
+    default: 0
+  },
+  raterUID: {
+    type: String,
+    required: true
+  }
+});
+
+const User = new Schema({
   uid: { type: String, required: true },
   name: { type: String, required: true },
   email: { type: String, required: true },
@@ -10,17 +21,13 @@ const User = new schema({
     type: String,
     default: ""
   },
-  rating: {
-    type: Number,
-    default: 0
-  },
-  numRatings: {
-    type: Number,
-    default: 0
-  },
   isAdmin: {
     type: Number,
     default: 0
+  },
+  ratings: {
+    type: [Rating],
+    default: []
   }
 });
 
@@ -28,8 +35,8 @@ User.methods.getEssaysPosted = function(cb) {
   return Essay.find({ ownerUID: this.uid }, cb);
 };
 
-User.methods.getEssaysReviewed = function() {
-  return Essay.find({ reviewerUID: this.uid, isReviewComplete: true });
+User.methods.getEssaysReviewed = function(cb) {
+  return Essay.find({ reviewerUID: this.uid, isReviewComplete: true }, cb);
 };
 
 User.methods.getEssaysReviewedCount = function() {
@@ -40,15 +47,36 @@ User.methods.getEssaysPostedCount = function() {
   return Essay.count({ ownerUID: this.uid });
 };
 
-User.methods.updateRating = function(newRating) {
-  this.rating = (this.rating * this.numRatings + newRating) / (this.numRatings + 1);
-  this.numRatings += 1;
-  return this.save();
+User.methods.getRatingAvg = function() {
+  const totals = this.ratings.reduce((acc, curr) => acc + curr, 0);
+  const avg = totals / this.ratings.length;
+  return avg;
+};
+
+User.methods.addRating = function(rating, raterUID) {
+  this.ratings.push({
+    rating,
+    raterUID
+  });
+  this.save();
+};
+
+User.statics.getReviewers = function(cb) {
+  Essay.find({ reviewerUID: { $ne: "" } }, (err, essays) => {
+    const reviewerUIDs = new Set(essays.map(({ reviewerUID }) => reviewerUID));
+    // TODO double check
+    return User.find(
+      {
+        uid: [...reviewerUIDs]
+      },
+      cb
+    );
+  });
 };
 
 User.statics.getReviewersCount = function() {
-  Essay.find({ reviewerUID: { $ne: "" } }, { reviewerUID: 1 }).then(function(err, essays) {
-    return new Set(essays.map(({ reviewerUID }) => reviewerUID)).size;
+  Essay.find({ reviewerUID: { $ne: "" } }, (err, essays) => {
+    return new Set(essays).size;
   });
 };
 

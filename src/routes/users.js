@@ -8,13 +8,8 @@ router
     User.find({}, (err, users) => res.json({ users }));
   })
   .post((req, res) => {
-    User.find({ uid: req.body.uid }, function(err, existingUsers) {
-      if (existingUsers.length === 0) {
-        const user = new User(req.body);
-        user.save().then(savedUser => res.status(201).json({ user: savedUser }));
-      } else {
-      }
-    });
+    const user = new User(req.body);
+    user.save().then(savedUser => res.status(201).json({ user: savedUser }));
   });
 
 router.use("/:uid*", (req, res, next) => {
@@ -51,19 +46,24 @@ router
     });
   });
 
-router.get("/:uid/posted", (req, res) => {});
-router.get("/:uid/posted/count", (req, res) => {
-  const count = req.user.getEssaysPostedCount();
+router.get("/:uid/profile", (req, res) => {
+  const postedCount = req.user.getEssaysPostedCount();
+  const reviewedCount = req.user.getEssaysReviewedCount();
+  const rating = req.user.getRatingAvg();
   res.json({
-    count
+    profile: {
+      postedCount,
+      reviewedCount,
+      rating
+    }
   });
 });
-router.get("/:uid/reviewed", (req, res) => {});
-router.get("/:uid/reviewed/count", (req, res) => {
-  const count = req.user.getEssaysReviewedCount();
-  res.json({
-    count
-  });
+
+router.post("/uid/rating", (req, res) => {
+  const { rating, reviewerUID } = req.body;
+  const reviewer = User.findOne({ uid: reviewerUID });
+  reviewer.addRating(rating, reviewerUID);
+  res.status(200).end();
 });
 
 module.exports = router;

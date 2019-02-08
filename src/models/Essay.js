@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-const Essay = new schema({
+const Essay = new Schema({
   selectedAreas: {
     type: [Boolean],
     required: true
