@@ -48,11 +48,7 @@ router.get("/:uid/profile", (req, res) => {
   const getRating = req.user.getRatingAvg();
   Promise.all([getPostedCount, getReviewedCount, getRating]).then(([postedCount, reviewedCount, rating]) => {
     res.json({
-      profile: {
-        postedCount,
-        reviewedCount,
-        rating
-      }
+      profile: [postedCount, reviewedCount, rating]
     });
   });
 });

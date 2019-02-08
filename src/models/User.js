@@ -40,17 +40,17 @@ User.methods.getEssaysReviewed = function() {
 };
 
 User.methods.getEssaysReviewedCount = function() {
-  return Essay.count({ reviewerUID: this.uid, isReviewComplete: true }).exec();
+  return Essay.countDocuments({ reviewerUID: this.uid, isReviewComplete: true }).exec();
 };
 
 User.methods.getEssaysPostedCount = function() {
-  return Essay.count({ ownerUID: this.uid }).exec();
+  return Essay.countDocuments({ ownerUID: this.uid }).exec();
 };
 
 User.methods.getRatingAvg = function() {
   const totals = this.ratings.reduce((acc, curr) => acc + curr.rating, 0);
-  const avg = totals / this.ratings.length;
-  return avg;
+  if (totals === 0) return 0;
+  else return totals / this.ratings.length;
 };
 
 User.methods.addRating = function(rating, raterUID) {
@@ -79,7 +79,7 @@ User.statics.getReviewersCount = function() {
 };
 
 User.statics.getUsersCount = function() {
-  return User.count().exec();
+  return User.countDocuments().exec();
 };
 
 module.exports = mongoose.model("User", User);
