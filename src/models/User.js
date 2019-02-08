@@ -28,6 +28,10 @@ const User = new Schema({
   ratings: {
     type: [Rating],
     default: []
+  },
+  points: {
+    type: Number,
+    default: 0
   }
 });
 
@@ -49,6 +53,11 @@ User.methods.getRating = function() {
   else return totals / this.ratings.length;
 };
 
+User.methods.updatePoints = function(inc) {
+  this.points += inc;
+  return this.save();
+};
+
 User.methods.addRating = function(rating, raterUID) {
   this.ratings.push({
     rating,
@@ -58,7 +67,7 @@ User.methods.addRating = function(rating, raterUID) {
 };
 
 User.statics.getReviewers = function() {
-  Essay.find({ reviewerUID: { $ne: "" } }, (err, essays) => {
+  Essay.find({ reviewerUID: { $ne: "" } }).then(essays => {
     const reviewerUIDs = new Set(essays.map(({ reviewerUID }) => reviewerUID));
     return User.find({
       uid: {
@@ -70,6 +79,19 @@ User.statics.getReviewers = function() {
 
 User.statics.getUsersCount = function() {
   return User.countDocuments().exec();
+};
+
+User.statics.sortbyPoints = function(essays) {
+  let ownersUIDs = new Set(essays.map(({ ownerUID }) => ownerUID));
+  let ownersMap = {};
+  return new Promise(resolve => {
+    User.find({ uid: { $all: [...ownersUIDs] } }).then(owners => {
+      owners.forEach(({ uid, points }) => {
+        ownersMap[uid] = points;
+      });
+      resolve(essays.sort((a, b) => ownersMap[a.ownerUID] - ownersMap[b.ownerUID]));
+    });
+  });
 };
 
 module.exports = mongoose.model("User", User);

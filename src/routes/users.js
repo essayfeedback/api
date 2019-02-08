@@ -5,7 +5,10 @@ const User = require("../models/User");
 router
   .route("/")
   .get((req, res) => {
-    User.find({}).then(users => res.json({ users }));
+    const sortBy = req.query.sort;
+    const getUsers = User.find({});
+    if (sortBy === "rating" || sortBy === "points") getUsers.sort({ [sortBy]: -1 });
+    getUsers.then(users => res.json({ users }));
   })
   .post((req, res) => {
     const user = new User(req.body);
@@ -25,7 +28,9 @@ router.use("/:uid*", (req, res, next) => {
 
 router
   .route("/:uid")
-  .get((req, res) => res.json({ user: req.user }))
+  .get((req, res) => {
+    res.json({ user: req.user });
+  })
   .put((req, res) => {
     Object.keys(req.body).map(key => {
       req.user[key] = req.body[key];
