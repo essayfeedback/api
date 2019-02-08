@@ -39,6 +39,7 @@ Essay.statics.getCount = function() {
 Essay.statics.getReviewedCount = function() {
   return Essay.countDocuments({ isReviewComplete: true }).exec();
 };
+
 Essay.statics.getPendingReviewCount = function() {
   return Essay.countDocuments({ isReviewComplete: false }).exec();
 };

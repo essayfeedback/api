@@ -43,12 +43,13 @@ router
   });
 
 router.get("/:uid/profile", (req, res) => {
-  const getPostedCount = req.user.getEssaysPostedCount();
-  const getReviewedCount = req.user.getEssaysReviewedCount();
-  const getRating = req.user.getRatingAvg();
-  Promise.all([getPostedCount, getReviewedCount, getRating]).then(([postedCount, reviewedCount, rating]) => {
+  const getReviewed = req.user.getEssaysReviewed();
+  const getRating = req.user.getRating();
+  const getEssaysPosted = req.user.getEssaysPosted();
+  const getEssaysReviewing = req.user.getEssaysReviewing();
+  Promise.all([getReviewed, getRating, getEssaysPosted, getEssaysReviewing]).then(([essaysReviewed, rating, essaysPosted, essaysReviewing]) => {
     res.json({
-      profile: [postedCount, reviewedCount, rating]
+      profile: [essaysPosted.length, essaysReviewed.length, rating, essaysPosted, essaysReviewing]
     });
   });
 });

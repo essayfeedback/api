@@ -31,23 +31,19 @@ const User = new Schema({
   }
 });
 
-User.methods.getEssaysPosted = function() {
-  return Essay.find({ ownerUID: this.uid }).exec();
-};
-
 User.methods.getEssaysReviewed = function() {
   return Essay.find({ reviewerUID: this.uid, isReviewComplete: true }).exec();
 };
 
-User.methods.getEssaysReviewedCount = function() {
-  return Essay.countDocuments({ reviewerUID: this.uid, isReviewComplete: true }).exec();
+User.methods.getEssaysReviewing = function() {
+  return Essay.find({ reviewerUID: this.uid, isReviewComplete: false }).exec();
 };
 
-User.methods.getEssaysPostedCount = function() {
-  return Essay.countDocuments({ ownerUID: this.uid }).exec();
+User.methods.getEssaysPosted = function() {
+  return Essay.find({ ownerUID: this.uid }).exec();
 };
 
-User.methods.getRatingAvg = function() {
+User.methods.getRating = function() {
   const totals = this.ratings.reduce((acc, curr) => acc + curr.rating, 0);
   if (totals === 0) return 0;
   else return totals / this.ratings.length;
@@ -70,12 +66,6 @@ User.statics.getReviewers = function() {
       }
     }).exec();
   });
-};
-
-User.statics.getReviewersCount = function() {
-  return Essay.find({ reviewerUID: { $ne: "" } }, (err, essays) => {
-    return new Set(essays).size;
-  }).exec();
 };
 
 User.statics.getUsersCount = function() {
