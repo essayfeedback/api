@@ -52,16 +52,24 @@ router.get("/:uid/profile", (req, res) => {
   const getRating = req.user.getRating();
   const getEssaysPosted = req.user.getEssaysPosted();
   const getEssaysReviewing = req.user.getEssaysReviewing();
-  Promise.all([getReviewed, getRating, getEssaysPosted, getEssaysReviewing]).then(([essaysReviewed, rating, essaysPosted, essaysReviewing]) => {
-    res.json({
-      profile: {
-        essaysPosted,
-        rating,
-        essaysReviewedCount: essaysReviewed.length,
-        essaysReviewing
-      }
-    });
-  });
+  const getPoints = req.user.getPoints();
+  Promise.all([getReviewed, getRating, getEssaysPosted, getEssaysReviewing, getPoints]).then(
+    ([essaysReviewed, rating, essaysPosted, essaysReviewing, points]) => {
+      res.json({
+        profile: {
+          essaysPosted,
+          rating,
+          essaysReviewedCount: essaysReviewed.length,
+          essaysReviewing,
+          points
+        }
+      });
+    }
+  );
+});
+
+router.get("/:uid/points", (req, res) => {
+  req.user.getPoints().then(points => res.json({ points }));
 });
 
 router.post("/uid/rating", (req, res) => {

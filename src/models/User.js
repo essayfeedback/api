@@ -47,13 +47,34 @@ User.methods.getEssaysPosted = function() {
   return Essay.find({ ownerUID: this.uid }).exec();
 };
 
+User.methods.getPoints = function() {
+  let points = 0;
+  return new Promise(resolve => {
+    this.getEssaysReviewed().then(essays => {
+      points += essays.length;
+    });
+    this.getPointsFromRatings().then(pointsFromRatings => {
+      points += pointsFromRatings;
+    });
+    resolve(points);
+  });
+};
+
+User.methods.getPointsFromRatings = function() {
+  let points = 0;
+  return new Promise(resolve => {
+    this.getRating().then(ratings => {
+      ratings.forEach(({ rating }) => (points += rating));
+    });
+    resolve(points);
+  });
+};
+
 User.methods.getRating = function() {
   const totals = this.ratings.reduce((acc, curr) => acc + curr.rating, 0);
   if (totals === 0) return 0;
-  else return totals / this.ratings.length;
+  else return Promise.resolve(totals / this.ratings.length);
 };
-
-User.methods.getPoints = function(inc) {};
 
 User.methods.addRating = function(rating, raterUID) {
   this.ratings.push({
