@@ -28,10 +28,6 @@ const User = new Schema({
   ratings: {
     type: [Rating],
     default: []
-  },
-  points: {
-    type: Number,
-    default: 5
   }
 });
 
@@ -48,7 +44,7 @@ User.methods.getEssaysPosted = function() {
 };
 
 User.methods.getPoints = function() {
-  let points = 0;
+  let points = 5;
   return new Promise(resolve => {
     this.getEssaysReviewed().then(essays => {
       points += essays.length;
@@ -60,20 +56,16 @@ User.methods.getPoints = function() {
   });
 };
 
-User.methods.getPointsFromRatings = function() {
-  let points = 0;
-  return new Promise(resolve => {
-    this.getRating().then(ratings => {
-      ratings.forEach(({ rating }) => (points += rating));
-    });
-    resolve(points);
-  });
-};
-
 User.methods.getRating = function() {
   const totals = this.ratings.reduce((acc, curr) => acc + curr.rating, 0);
-  if (totals === 0) return 0;
+  if (totals === 0) return Promise.resolve(0);
   else return Promise.resolve(totals / this.ratings.length);
+};
+
+User.methods.getPointsFromRatings = function() {
+  let points = 0;
+  this.ratings.forEach(({ rating }) => (points += rating));
+  return Promise.resolve(points);
 };
 
 User.methods.addRating = function(rating, raterUID) {
