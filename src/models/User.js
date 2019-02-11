@@ -46,13 +46,16 @@ User.methods.getEssaysPosted = function() {
 User.methods.getPoints = function() {
   let points = 5;
   return new Promise(resolve => {
-    this.getEssaysReviewed().then(essays => {
-      points += essays.length;
-    });
-    this.getPointsFromRatings().then(pointsFromRatings => {
-      points += pointsFromRatings;
-    });
-    resolve(points);
+    this.getEssaysReviewed()
+      .then(essays => {
+        points += essays.length;
+      })
+      .then(points => {
+        this.getPointsFromRatings().then(pointsFromRatings => {
+          points += pointsFromRatings;
+        });
+        resolve(points);
+      });
   });
 };
 
@@ -92,9 +95,9 @@ User.statics.getUsersCount = function() {
 };
 
 User.statics.sortbyPoints = function(essays) {
-  let ownersUIDs = new Set(essays.map(({ ownerUID }) => ownerUID));
-  let ownersMap = {};
   return new Promise(resolve => {
+    let ownersUIDs = new Set(essays.map(({ ownerUID }) => ownerUID));
+    let ownersMap = {};
     User.find({ uid: { $all: [...ownersUIDs] } }).then(owners => {
       owners.forEach(({ uid, points }) => {
         ownersMap[uid] = points;
