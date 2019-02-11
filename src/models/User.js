@@ -44,18 +44,11 @@ User.methods.getEssaysPosted = function() {
 };
 
 User.methods.getPoints = function() {
-  let points = 5;
   return new Promise(resolve => {
     this.getEssaysReviewed()
-      .then(essays => {
-        points += essays.length;
-      })
-      .then(points => {
-        this.getPointsFromRatings().then(pointsFromRatings => {
-          points += pointsFromRatings;
-        });
-        resolve(points);
-      });
+      .then(essays => essays.length)
+      .then(points => this.ratings.reduce((acc, { rating }) => acc + rating, points))
+      .then(points => resolve(points + 5));
   });
 };
 
@@ -63,12 +56,6 @@ User.methods.getRating = function() {
   const totals = this.ratings.reduce((acc, curr) => acc + curr.rating, 0);
   if (totals === 0) return Promise.resolve(0);
   else return Promise.resolve(totals / this.ratings.length);
-};
-
-User.methods.getPointsFromRatings = function() {
-  let points = 0;
-  this.ratings.forEach(({ rating }) => (points += rating));
-  return Promise.resolve(points);
 };
 
 User.methods.addRating = function(rating, raterUID) {
