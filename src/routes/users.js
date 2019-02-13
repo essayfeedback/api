@@ -68,6 +68,10 @@ router.get("/:uid/profile", (req, res) => {
   );
 });
 
+router.get("/:uid/photoURL", (req, res) => {
+  res.json({ photoURL: req.user.photoURL });
+});
+
 router.get("/:uid/points", (req, res) => {
   req.user.getPoints().then(points => res.json({ points }));
 });
