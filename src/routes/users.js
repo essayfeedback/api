@@ -12,6 +12,7 @@ router
   })
   .post((req, res) => {
     const user = new User(req.body);
+    user.dateCreated = new Date().toISOString();
     user.save().then(savedUser => res.status(201).json({ user: savedUser }));
   });
 

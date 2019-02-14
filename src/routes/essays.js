@@ -5,8 +5,8 @@ const Essay = require("../models/Essay");
 router
   .route("/")
   .get((req, res) => {
-    Essay.find({ isReviewComplete: false, reviewerUID: "" })
-      .sort({})
+    Essay.find({ isReviewComplete: false })
+      .sort({ dateCreated: -1 })
       .then(essays => {
         if (req.query.sort === "points") Essay.statics.sortByPoints(essays).then(essaysSorted => res.json({ essays: essaysSorted }));
         else res.json({ essays });
@@ -14,6 +14,7 @@ router
   })
   .post((req, res) => {
     const essay = new Essay(req.body);
+    essay.dateCreated = new Date().toISOString();
     essay.save().then(savedEssay => res.status(201).json({ essay: savedEssay }));
   });
 
