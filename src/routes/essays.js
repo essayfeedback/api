@@ -5,10 +5,12 @@ const Essay = require("../models/Essay");
 router
   .route("/")
   .get((req, res) => {
-    Essay.find({ isReviewComplete: false }).then(essays => {
-      if (req.query.sort === "points") Essay.statics.sortByPoints(essays).then(essaysSorted => res.json({ essays: essaysSorted }));
-      else res.json({ essays });
-    });
+    Essay.find({ isReviewComplete: false, reviewerUID: "" })
+      .sort({})
+      .then(essays => {
+        if (req.query.sort === "points") Essay.statics.sortByPoints(essays).then(essaysSorted => res.json({ essays: essaysSorted }));
+        else res.json({ essays });
+      });
   })
   .post((req, res) => {
     const essay = new Essay(req.body);
@@ -35,12 +37,14 @@ router
     Object.keys(req.body).map(key => {
       req.essay[key] = req.body[key];
     });
+    req.essay.lastModified = new Date().toISOString();
     req.essay.save().then(() => res.status(200).end());
   })
   .patch((req, res) => {
     for (let p in req.body) {
       req.essay[p] = req.body[p];
     }
+    req.essay.lastModified = new Date().toISOString();
     req.essay.save().then(() => res.status(200).end());
   })
   .delete((req, res) => {

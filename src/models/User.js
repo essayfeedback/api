@@ -28,6 +28,14 @@ const User = new Schema({
   ratings: {
     type: [Rating],
     default: []
+  },
+  dateCreated: {
+    type: String,
+    required: true
+  },
+  lastModified: {
+    type: String,
+    default: ""
   }
 });
 

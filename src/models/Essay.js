@@ -29,6 +29,14 @@ const Essay = new Schema({
   isReviewComplete: {
     type: Boolean,
     default: false
+  },
+  dateCreated: {
+    type: String,
+    required: true
+  },
+  lastModified: {
+    type: String,
+    default: ""
   }
 });
 

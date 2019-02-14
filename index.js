@@ -17,20 +17,20 @@ app.use("/api/essays", require("./src/routes/essays"));
 app.use("/api/users", require("./src/routes/users"));
 app.listen(PORT, err => {
   if (err) throw err;
-  console.log(`server ready at http://localhost:${PORT}`);
+  console.info(`server ready at http://localhost:${PORT}`);
 });
 
 mongoose.set("debug", true);
 mongoose.connection.on("connected", function() {
-  console.log("Mongoose connection open to " + dbURI);
+  console.info("Mongoose is connected");
 });
 
 mongoose.connection.on("error", function(err) {
-  console.log("Mongoose connection error: " + err);
+  console.error("Mongoose connection error: " + err);
 });
 
 mongoose.connection.on("disconnected", function() {
-  console.log("Mongoose connection disconnected");
+  console.warn("Mongoose connection disconnected");
 });
 
 process.on("SIGINT", function() {

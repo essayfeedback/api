@@ -35,12 +35,14 @@ router
     Object.keys(req.body).map(key => {
       req.user[key] = req.body[key];
     });
+    req.user.lastModified = new Date().toISOString();
     req.user.save().then(() => res.status(200).end());
   })
   .patch((req, res) => {
     for (let p in req.body) {
       req.user[p] = req.body[p];
     }
+    req.user.lastModified = new Date().toISOString();
     req.user.save().then(() => res.status(200).end());
   })
   .delete((req, res) => {
@@ -80,6 +82,7 @@ router.post("/uid/rating", (req, res) => {
   const { rating, reviewerUID } = req.body;
   const reviewer = User.findOne({ uid: reviewerUID }).exec();
   reviewer.addRating(rating, reviewerUID);
+  reviewer.lastModified = new Date().toISOString();
   res.status(200).end();
 });
 
