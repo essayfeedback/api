@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Essay = require("../models/Essay");
+const Essay = require("../models/essay");
 
 const Schema = mongoose.Schema;
 

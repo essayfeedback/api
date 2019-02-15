@@ -1,5 +1,0 @@
-{
-  "verbose": true,
-  "watch": ["index.js", "src/"],
-  "ext": "js"
-}
