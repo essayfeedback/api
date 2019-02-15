@@ -1,8 +1,7 @@
-const express = require("express");
-const router = express.Router();
-const Essay = require("../models/Essay");
+const app = require("../app");
+const Essay = require("../db/essay");
 
-router
+app
   .route("/")
   .get((req, res) => {
     Essay.find({ isReviewComplete: false })
@@ -18,7 +17,7 @@ router
     essay.save().then(savedEssay => res.status(201).json({ essay: savedEssay }));
   });
 
-router.use("/:id", (req, res, next) => {
+app.use("/:id", (req, res, next) => {
   Essay.findById(req.params.id).then(essay => {
     if (!essay) {
       res.status(404).end();
@@ -29,7 +28,7 @@ router.use("/:id", (req, res, next) => {
   });
 });
 
-router
+app
   .route("/:id")
   .get((req, res) => {
     res.json({ essay: req.essay });
@@ -51,5 +50,3 @@ router
   .delete((req, res) => {
     req.essay.remove().then(() => res.status(204).end());
   });
-
-module.exports = router;

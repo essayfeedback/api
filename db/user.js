@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 const Essay = require("../models/Essay");
+
+const Schema = mongoose.Schema;
 
 const Rating = new Schema({
   rating: {

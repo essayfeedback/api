@@ -1,8 +1,7 @@
-const express = require("express");
-const router = express.Router();
+const app = require("../app");
 const User = require("../models/User");
 
-router
+app
   .route("/")
   .get((req, res) => {
     const sortBy = req.query.sort;
@@ -16,7 +15,7 @@ router
     user.save().then(savedUser => res.status(201).json({ user: savedUser }));
   });
 
-router.use("/:uid*", (req, res, next) => {
+app.use("/:uid*", (req, res, next) => {
   User.findOne({ uid: req.params.uid }).then(user => {
     if (!user) {
       res.status(404).end();
@@ -27,7 +26,7 @@ router.use("/:uid*", (req, res, next) => {
   });
 });
 
-router
+app
   .route("/:uid")
   .get((req, res) => {
     res.json({ user: req.user });
@@ -50,7 +49,7 @@ router
     req.user.remove().then(() => res.status(204).end());
   });
 
-router.get("/:uid/profile", (req, res) => {
+app.get("/:uid/profile", (req, res) => {
   const getReviewed = req.user.getEssaysReviewed();
   const getRating = req.user.getRating();
   const getEssaysPosted = req.user.getEssaysPosted();
@@ -71,20 +70,18 @@ router.get("/:uid/profile", (req, res) => {
   );
 });
 
-router.get("/:uid/photoURL", (req, res) => {
+app.get("/:uid/photoURL", (req, res) => {
   res.json({ photoURL: req.user.photoURL });
 });
 
-router.get("/:uid/points", (req, res) => {
+app.get("/:uid/points", (req, res) => {
   req.user.getPoints().then(points => res.json({ points }));
 });
 
-router.post("/uid/rating", (req, res) => {
+app.post("/uid/rating", (req, res) => {
   const { rating, reviewerUID } = req.body;
   const reviewer = User.findOne({ uid: reviewerUID }).exec();
   reviewer.addRating(rating, reviewerUID);
   reviewer.lastModified = new Date().toISOString();
   res.status(200).end();
 });
-
-module.exports = router;

@@ -4,4 +4,3 @@
 .gitignore
 deploy.sh
 nodemon.json
-npm-debug.log*
