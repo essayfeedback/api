@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 // modules
 const middleware = require("../middleware");
-const mongoose = require("../db");
+const mongoose = require("./db");
 
 const {
   mongodb: { username, password }

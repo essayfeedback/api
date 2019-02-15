@@ -1,5 +1,5 @@
 const app = require("../app");
-const Essay = require("../db/essay");
+const Essay = require("../models/essay");
 
 app
   .route("/")
