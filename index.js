@@ -13,8 +13,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(require("./logger"));
-app.use("/api/essays", require("./src/routes/essays"));
-app.use("/api/users", require("./src/routes/users"));
+app.use("/api/essays", require("./routes/essays"));
+app.use("/api/users", require("./routes/users"));
 app.listen(PORT, err => {
   if (err) throw err;
   console.info(`server ready at http://localhost:${PORT}`);

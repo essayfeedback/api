@@ -1,6 +1,7 @@
 const express = require("express");
+const Essay = require("../models/essay");
+
 const router = express.Router();
-const Essay = require("../models/Essay");
 
 router
   .route("/")
