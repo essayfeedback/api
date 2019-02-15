@@ -7,7 +7,7 @@ const mongoose = require("../db");
 
 const {
   mongodb: { username, password }
-} = require("./secrets.json");
+} = require("../secrets.json");
 
 mongoose.connect(`mongodb://${username}:${encodeURIComponent(password)}@ds161804.mlab.com:61804/essayfeedback`, { useNewUrlParser: true });
 app.use(...middleware);
