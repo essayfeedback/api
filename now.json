@@ -5,7 +5,12 @@
     "use": "@now/node"
   }],
   "routes": [{
-    "src": "/api/(.*)",
-    "dest": "/routes/$1"
-  }]
+      "src": "/api/essays*",
+      "dest": "/routes/essays.js"
+    },
+    {
+      "src": "/api/users*",
+      "dest": "/routes/users.js"
+    }
+  ]
 }
