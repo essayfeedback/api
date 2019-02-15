@@ -50,3 +50,5 @@ app
   .delete((req, res) => {
     req.essay.remove().then(() => res.status(204).end());
   });
+
+module.exports = app;
