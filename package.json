@@ -3,7 +3,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.16.4",
-    "mongoose": "^5.4.6"
+    "mongoose": "^5.4.12"
   },
   "scripts": {
     "start": "NODE_ENV=production node index.js",
@@ -12,6 +12,6 @@
     "stage": "now"
   },
   "devDependencies": {
-    "nodemon": "^1.18.9"
+    "nodemon": "^1.18.10"
   }
 }

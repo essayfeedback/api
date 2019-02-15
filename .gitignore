@@ -1,4 +1,7 @@
-/node_modules
 .DS_Store
-secrets.json
 /.vscode
+/node_modules
+.gitignore
+deploy.sh
+nodemon.json
+secrets.json
