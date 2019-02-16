@@ -37,7 +37,7 @@ function deleteEssay(req, res) {
 }
 
 app.get("*", async (req, res) => {
-  if (url === "/" || url === "") {
+  if (req.path === "/" || req.path === "") {
     if (req.method === "GET") getEssays(req, res);
     if (req.method === "POST") createEssay(req, res);
   } else {
