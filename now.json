@@ -5,7 +5,7 @@
     "use": "@now/node"
   }],
   "routes": [{
-      "src": "/api/essays(.*)",
+      "src": "/api/essays",
       "dest": "/routes/essays.js"
     },
     {
