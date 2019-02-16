@@ -53,17 +53,15 @@ User.methods.getEssaysPosted = function() {
 };
 
 User.methods.getPoints = function() {
-  return new Promise(resolve => {
-    this.getEssaysReviewed()
-      .then(essays => essays.length)
-      .then(points => this.ratings.reduce((acc, { rating }) => acc + rating, points))
-      .then(points => resolve(points + 5));
-  });
+  return this.getEssaysReviewed()
+    .then(essays => essays.length)
+    .then(points => this.ratings.reduce((acc, { rating }) => acc + rating, points))
+    .then(points => points + 5);
 };
 
 User.methods.getRating = function() {
   const totals = this.ratings.reduce((acc, curr) => acc + curr.rating, 0);
-  if (totals === 0) return Promise.resolve(0);
+  if (this.ratings.length === 0) return Promise.resolve(0);
   else return Promise.resolve(totals / this.ratings.length);
 };
 
@@ -76,7 +74,7 @@ User.methods.addRating = function(rating, raterUID) {
 };
 
 User.statics.getReviewers = function() {
-  Essay.find({ reviewerUID: { $ne: "" } }).then(essays => {
+  return Essay.find({ reviewerUID: { $ne: "" } }).then(essays => {
     const reviewerUIDs = new Set(essays.map(({ reviewerUID }) => reviewerUID));
     return User.find({
       uid: {
@@ -98,7 +96,8 @@ User.statics.sortbyPoints = function(essays) {
       owners.forEach(({ uid, points }) => {
         ownersMap[uid] = points;
       });
-      resolve(essays.sort((a, b) => ownersMap[a.ownerUID] - ownersMap[b.ownerUID]));
+      const essaysSorted = essays.sort((a, b) => ownersMap[a.ownerUID] - ownersMap[b.ownerUID]);
+      resolve(essaysSorted);
     });
   });
 };

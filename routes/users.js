@@ -50,24 +50,23 @@ app
   });
 
 app.get("/:uid/profile", (req, res) => {
-  const getReviewed = req.user.getEssaysReviewed();
-  const getRating = req.user.getRating();
-  const getEssaysPosted = req.user.getEssaysPosted();
-  const getEssaysReviewing = req.user.getEssaysReviewing();
-  const getPoints = req.user.getPoints();
-  Promise.all([getReviewed, getRating, getEssaysPosted, getEssaysReviewing, getPoints]).then(
-    ([essaysReviewed, rating, essaysPosted, essaysReviewing, points]) => {
-      res.json({
-        profile: {
-          essaysPosted,
-          rating,
-          essaysReviewedCount: essaysReviewed.length,
-          essaysReviewing,
-          points
-        }
-      });
-    }
-  );
+  Promise.all([
+    req.user.getEssaysReviewed(),
+    req.user.getRating(),
+    req.user.getEssaysPosted(),
+    req.user.getEssaysReviewing(),
+    req.user.getPoints()
+  ]).then(([essaysReviewed, rating, essaysPosted, essaysReviewing, points]) => {
+    res.json({
+      profile: {
+        essaysPosted,
+        rating,
+        essaysReviewedCount: essaysReviewed.length,
+        essaysReviewing,
+        points
+      }
+    });
+  });
 });
 
 app.get("/:uid/photoURL", (req, res) => {
@@ -80,10 +79,12 @@ app.get("/:uid/points", (req, res) => {
 
 app.post("/uid/rating", (req, res) => {
   const { rating, reviewerUID } = req.body;
-  const reviewer = User.findOne({ uid: reviewerUID }).exec();
-  reviewer.addRating(rating, reviewerUID);
-  reviewer.lastModified = new Date().toISOString();
-  res.status(200).end();
+  User.findOne({ uid: reviewerUID }).then(reviewer => {
+    reviewer.addRating(rating, reviewerUID).then(() => {
+      reviewer.lastModified = new Date().toISOString();
+      res.status(200).end();
+    });
+  });
 });
 
 module.exports = app;
