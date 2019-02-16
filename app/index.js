@@ -10,6 +10,7 @@ const {
 } = require("../secrets.json");
 
 mongoose.connect(`mongodb://${username}:${encodeURIComponent(password)}@ds161804.mlab.com:61804/essayfeedback`, { useNewUrlParser: true });
+
 app.use(...middleware);
 
 module.exports = app;
